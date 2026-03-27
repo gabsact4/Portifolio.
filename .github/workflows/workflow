@@ -1,0 +1,38 @@
+cat > .github/workflows/build.yml <<EOL
+name: Build Next.js
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Next.js static export
+        run: |
+          npm run build
+          npx next export
+
+      - name: Upload static site artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: out-folder
+          path: out/
+EOL
